@@ -1,9 +1,36 @@
 from flask_restful import Resource
-from flask import request
+from flask import request, current_app as app, jsonify
 from models import users
 from flask_bcrypt import Bcrypt
 from bson import json_util, ObjectId
 import json
+import jwt
+from functools import wraps
+
+
+def authentication_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        print("hola")
+        token = None
+        if 'myToken' in request.headers:
+            token = request.headers['myToken']
+
+        if not token:
+            print("ok")
+            return {
+                "message": "login to access this route"
+            }, 401
+        try:
+            decode_token = jwt.decode(token, app.config['SECRET_KEY'])
+        except:
+            return {
+                "user-token": "invalid"
+            }, 401
+        return f(*args, **kwargs)
+
+    return wrap
+
 
 bcrypt = Bcrypt()
 
@@ -18,6 +45,7 @@ class UserSignup(Resource):
             users.User(
                 email=data["email"], name=data["name"], password=hashedPassword).save()
             obj = users.User.objects.values().get({"email": data["email"]})
+
             sanitized = json.loads(json_util.dumps(obj))
             print(sanitized)
             return {**sanitized, "logged": True}, 201
@@ -37,7 +65,10 @@ class LoginUser(Resource):
             log = users.User.objects.values().get({"email": data["email"]})
             verify = json.loads(json_util.dumps(log))
             if bcrypt.check_password_hash(verify["password"], data["password"]):
-                return {**verify, "logged": True, "exist": True}
+                auth = jwt.encode(
+                    {"sub": data["email"]}, app.config.get("SECRET_KEY"), algorithm="HS256").decode("utf-8")
+
+                return {**verify, "logged": True, "exist": True, "auth_token": auth}
             return {"message": "Invalid email or password", "error": True}, 401
 
         except Exception as err:
@@ -46,6 +77,8 @@ class LoginUser(Resource):
 
 
 class UserMethod(Resource):
+    method_decorators = [authentication_required]
+
     def get(self, id):
         try:
             search = users.User.objects.values().get({"_id": ObjectId(id)})

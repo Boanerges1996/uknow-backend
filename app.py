@@ -10,6 +10,8 @@ from resources import users
 app = Flask(__name__)
 api = Api(app)
 
+app.config.from_object("config.Config")
+
 
 connect("mongodb://localhost/uknow", alias="uknow")
 
