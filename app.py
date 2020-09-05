@@ -25,6 +25,7 @@ api.add_resource(branches.GetAllBranches, "/branch/all")
 
 api.add_resource(notification.NotificationRegister,
                  "/notification/register/<id>")
+api.add_resource(notification.GetAllNotification, "/notification/get/all")
 
 # @app.route("/user", methods=["POST"])
 # def createUser():
