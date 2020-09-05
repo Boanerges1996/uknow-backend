@@ -1,5 +1,6 @@
 from pymodm import MongoModel, fields
 from pymongo.write_concern import WriteConcern
+from pymongo.operations import IndexModel
 
 
 class Branch(MongoModel):
@@ -8,3 +9,7 @@ class Branch(MongoModel):
     class Meta:
         connection_alias = "uknow"
         write_concern = WriteConcern(j=True)
+        indexes = [
+            IndexModel('name', unique=True, partialFilterExpression={
+                '_cls': '%s.Branch' % (__name__,)})
+        ]

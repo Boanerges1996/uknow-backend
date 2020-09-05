@@ -6,31 +6,7 @@ from bson import json_util, ObjectId
 import json
 import jwt
 from functools import wraps
-
-
-def authentication_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        print("hola")
-        token = None
-        if 'myToken' in request.headers:
-            token = request.headers['myToken']
-
-        if not token:
-            print("ok")
-            return {
-                "message": "login to access this route"
-            }, 401
-        try:
-            decode_token = jwt.decode(token, app.config['SECRET_KEY'])
-        except:
-            return {
-                "user-token": "invalid"
-            }, 401
-        return f(*args, **kwargs)
-
-    return wrap
-
+from auth import authentication_required
 
 bcrypt = Bcrypt()
 
