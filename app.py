@@ -5,7 +5,7 @@ from pymodm import connect
 
 
 # Resource import
-from resources import users, branches,  notification
+from resources import users, branches,  notification, admin
 
 
 app = Flask(__name__)
@@ -26,6 +26,11 @@ api.add_resource(branches.GetAllBranches, "/branch/all")
 api.add_resource(notification.NotificationRegister,
                  "/notification/register/<id>")
 api.add_resource(notification.GetAllNotification, "/notification/get/all")
+
+
+# Admin routes
+api.add_resource(admin.AdminSignUp, "/admin/signup")
+api.add_resource(admin.AdminLogin, "/admin/login")
 
 # @app.route("/user", methods=["POST"])
 # def createUser():
