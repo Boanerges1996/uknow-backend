@@ -19,7 +19,9 @@ class UserSignup(Resource):
             hashedPassword = bcrypt.generate_password_hash(
                 data["password"]).decode("utf-8")
             users.User(
-                email=data["email"], name=data["name"], password=hashedPassword).save()
+                email=data["email"], firstname=data["firstname"], lastname=data["lastname"],
+                telephone=data["telephone"], year=data["year"], isLocal=data["isLoacal"],
+                password=hashedPassword).save()
             obj = users.User.objects.values().get({"email": data["email"]})
 
             sanitized = json.loads(json_util.dumps(obj))

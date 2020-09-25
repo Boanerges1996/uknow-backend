@@ -16,7 +16,7 @@ app.config.from_object("config.Config")
 
 connect("mongodb://localhost/uknow", alias="uknow")
 
-api.add_resource(users.UserSignup, "/user/signup")
+
 api.add_resource(users.LoginUser, "/user/login")
 api.add_resource(users.UserMethod, "/user/meth/<string:id>")
 
@@ -31,6 +31,7 @@ api.add_resource(notification.GetAllNotification, "/notification/get/all")
 # Admin routes
 api.add_resource(admin.AdminSignUp, "/admin/signup")
 api.add_resource(admin.AdminLogin, "/admin/login")
+api.add_resource(users.UserSignup, "/user/signup")
 
 # @app.route("/user", methods=["POST"])
 # def createUser():
