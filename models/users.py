@@ -11,8 +11,9 @@ class User(MongoModel):
     password = fields.CharField()
     telephone = fields.CharField()
     branch = fields.ReferenceField("Branch")
-    year = fields.IntegerField(default=1)
+    year = fields.CharField(default="One")
     isLocal = fields.BooleanField(default=True)
+    first = fields.BooleanField(default=True)
     pic = fields.CharField(
         default="https://img2.pngio.com/united-states-avatar-organization-information-png-512x512px-user-avatar-png-820_512.jpg")
     admin = fields.ReferenceField("Admin")

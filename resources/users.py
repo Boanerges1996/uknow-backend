@@ -19,18 +19,18 @@ class UserSignup(Resource):
             hashedPassword = bcrypt.generate_password_hash(
                 data["password"]).decode("utf-8")
             users.User(
-                email=data["email"], firstname=data["firstname"], lastname=data["lastname"],
-                telephone=data["telephone"], year=data["year"], isLocal=data["isLoacal"],
+                email=data["email"],
+                telephone=data["telephone"],
                 password=hashedPassword).save()
             obj = users.User.objects.values().get({"email": data["email"]})
 
             sanitized = json.loads(json_util.dumps(obj))
-            print(sanitized)
-            return {**sanitized, "logged": True}, 201
+            # print(sanitized)
+            return {**sanitized, "logged": True,"registered":True}, 201
 
         except Exception as err:
             print(err)
-            return {"message": "Email already exists", "exist": True}, 200
+            return {"message": "Email already exists", "exist": True,"logged":False}, 200
 
         # print(data)
         # return {"message": "received"}, 201
@@ -43,11 +43,11 @@ class LoginUser(Resource):
             log = users.User.objects.values().get({"email": data["email"]})
             verify = json.loads(json_util.dumps(log))
             if bcrypt.check_password_hash(verify["password"], data["password"]):
-                auth = jwt.encode(
-                    {"sub": data["email"]}, app.config.get("SECRET_KEY"), algorithm="HS256").decode("utf-8")
+                # auth = jwt.encode(
+                #     {"sub": data["email"]}, app.config.get("SECRET_KEY"), algorithm="HS256").decode("utf-8")
 
-                return {**verify, "logged": True, "exist": True, "auth_token": auth}
-            return {"message": "Invalid email or password", "error": True}, 401
+                return {**verify, "logged": True, "exist": True,"invalid":False}
+            return {"message": "Invalid email or password", "error": True,"invalid":True}, 401
 
         except Exception as err:
             print(err)
@@ -55,7 +55,7 @@ class LoginUser(Resource):
 
 
 class UserMethod(Resource):
-    method_decorators = [authentication_required]
+    # method_decorators = [authentication_required]
 
     def get(self, id):
         try:
